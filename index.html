@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PlanPal – Studieplanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F4FF;--card:#fff;--ink:#1E1B4B;--mut:#6B6890;--line:#E4E1FA;--acc:#6D5EF5;--acc2:#8B7DFF;--mint:#2FD3A5;--coral:#FF7A6B;--sun:#FFB84D;--bub:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F0E24;--card:#1A1838;--ink:#EEEDFF;--mut:#9A97C4;--line:#2E2B58;--acc:#8B7DFF;--bub:#262350}}
+:root[data-theme="dark"]{--bg:#0F0E24;--card:#1A1838;--ink:#EEEDFF;--mut:#9A97C4;--line:#2E2B58;--acc:#8B7DFF;--bub:#262350}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+.app{max-width:760px;margin:0 auto;padding:16px 16px 96px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}.brand svg{width:46px;height:46px;flex:none}
+.brand b{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;display:block;line-height:1}
+.brand small{color:var(--mut);font-size:.78rem}
+button{font:inherit;color:inherit;cursor:pointer}
+.icon{border:1px solid var(--line);background:var(--card);border-radius:12px;width:42px;height:42px;font-size:1.1rem}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.buddy{display:flex;align-items:flex-end;gap:10px;margin:6px 0 18px}
+.robot{border:0;background:none;padding:0;flex:none;width:92px}
+.robot svg{width:92px;height:auto;overflow:visible}
+.robot .arm{transform-origin:78px 76px;animation:wave 2.4s ease-in-out 1}
+@keyframes wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-28deg)}40%,80%{transform:rotate(8deg)}}
+.bubble{position:relative;background:var(--bub);border:1px solid var(--line);border-radius:20px 20px 20px 6px;padding:12px 16px;font-size:.98rem;flex:1;min-height:56px;box-shadow:0 6px 20px rgba(109,94,245,.12)}
+.bubble::before{content:"";position:absolute;left:-8px;bottom:12px;width:14px;height:14px;background:var(--bub);border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+.bubble em{font-style:normal;color:var(--acc);font-weight:600}
+.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;padding:9px;border-radius:10px;font-weight:600;color:var(--mut)}
+.tabs button[aria-selected=true]{background:var(--acc);color:#fff}
+.weekbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.weekbar h2{margin:0;font-size:1.05rem}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
+.day{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:8px 0;text-align:center;font-size:.78rem;color:var(--mut)}
+.day b{display:block;font-size:1.15rem;color:var(--ink)}
+.day[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:#e8e5ff}.day[aria-pressed=true] b{color:#fff}
+.day .dots{height:6px;display:flex;justify-content:center;gap:3px;margin-top:4px}
+.day .dots i{width:5px;height:5px;border-radius:50%;background:var(--coral)}
+.day.today:not([aria-pressed=true]){border-color:var(--acc)}
+.item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c,var(--acc));border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.item.done{opacity:.55}.item.done .t{text-decoration:line-through}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:none;flex:none;font-size:.9rem;color:#fff;line-height:1}
+.done .chk{background:var(--mint);border-color:var(--mint)}
+.item .body{flex:1;min-width:0}.t{font-weight:600}
+.meta{color:var(--mut);font-size:.82rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--c,var(--acc)) 18%,transparent);color:var(--c,var(--acc))}
+.del{border:0;background:none;color:var(--mut);font-size:1.1rem;padding:6px}
+.empty{text-align:center;color:var(--mut);padding:28px 10px;border:1.5px dashed var(--line);border-radius:16px}
+h3.grp{margin:18px 0 8px;font-size:.95rem;color:var(--mut)}
+.fab{position:fixed;right:max(18px,calc(50% - 362px));bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--acc);color:#fff;border:0;border-radius:99px;padding:14px 22px;font-weight:700;box-shadow:0 10px 24px rgba(109,94,245,.45)}
+dialog{border:0;border-radius:20px;padding:0;background:var(--card);color:var(--ink);width:min(440px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+dialog::backdrop{background:rgba(15,14,36,.6)}
+form{padding:20px;display:grid;gap:12px}form h2{margin:0}
+label{display:grid;gap:4px;font-size:.84rem;color:var(--mut);font-weight:600}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chkrow{display:flex;align-items:center;gap:8px;font-size:.92rem;color:var(--ink)}.chkrow input{width:18px;height:18px}
+.btns{display:flex;gap:10px;justify-content:flex-end}
+.btn{border:1px solid var(--line);background:none;border-radius:12px;padding:10px 18px;font-weight:600}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}
+@media (prefers-reduced-motion:reduce){.robot .arm{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 64 64" aria-label="PlanPal logo" role="img">
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8B7DFF"/><stop offset="1" stop-color="#4B3FD8"/></linearGradient></defs>
+      <rect width="64" height="64" rx="16" fill="url(#lg)"/>
+      <line x1="32" y1="6" x2="32" y2="12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="6" r="3" fill="#2FD3A5"/>
+      <rect x="11" y="13" width="42" height="40" rx="9" fill="#fff"/>
+      <rect x="11" y="13" width="42" height="12" rx="9" fill="#E4E1FA"/><rect x="11" y="20" width="42" height="5" fill="#E4E1FA"/>
+      <rect x="19" y="9" width="4" height="9" rx="2" fill="#1E1B4B"/><rect x="41" y="9" width="4" height="9" rx="2" fill="#1E1B4B"/>
+      <circle cx="24" cy="34" r="3.2" fill="#1E1B4B"/><circle cx="40" cy="34" r="3.2" fill="#1E1B4B"/>
+      <circle cx="25" cy="33" r="1" fill="#fff"/><circle cx="41" cy="33" r="1" fill="#fff"/>
+      <path d="M22 43c3 4 17 4 20 0" stroke="#6D5EF5" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+      <path d="M44 46l3 3 6-7" stroke="#2FD3A5" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(-4 4)"/>
+    </svg>
+    <div><b>PlanPal</b><small>Jouw studieplanner</small></div>
+  </div>
+  <button class="icon" id="theme" aria-label="Wissel tussen donker en licht"></button>
+</header>
+
+<div class="buddy">
+  <button class="robot" id="robot" aria-label="Pip, je studiemaatje. Tik voor een nieuw bericht">
+    <svg viewBox="0 0 100 120">
+      <line x1="50" y1="8" x2="50" y2="22" stroke="#6D5EF5" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="8" r="6" fill="#FF7A6B"/>
+      <rect x="18" y="22" width="64" height="50" rx="20" fill="#8B7DFF"/><rect x="26" y="30" width="48" height="34" rx="14" fill="#1E1B4B"/>
+      <circle cx="40" cy="45" r="6" fill="#2FD3A5"/><circle cx="60" cy="45" r="6" fill="#2FD3A5"/>
+      <path d="M42 56q8 6 16 0" stroke="#2FD3A5" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect x="28" y="76" width="44" height="34" rx="14" fill="#6D5EF5"/><circle cx="50" cy="93" r="7" fill="#fff" opacity=".9"/><path d="M46 93l3 3 5-6" stroke="#6D5EF5" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <rect x="12" y="80" width="12" height="24" rx="6" fill="#8B7DFF"/>
+      <g class="arm"><rect x="74" y="64" width="12" height="26" rx="6" fill="#8B7DFF" transform="rotate(-20 80 76)"/></g>
+    </svg>
+  </button>
+  <div class="bubble" id="bubble" role="status" aria-live="polite"></div>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" id="tabWeek" aria-selected="true">Week</button>
+  <button role="tab" id="tabAll" aria-selected="false">Alles</button>
+</nav>
+
+<main id="view"></main>
+</div>
+
+<button class="fab" id="add">+ Nieuwe planning</button>
+
+<dialog id="dlg">
+<form id="f" method="dialog">
+  <h2>Nieuwe planning</h2>
+  <label>Titel<input id="fTitle" required placeholder="bijv. Hoorcollege Statistiek"></label>
+  <div class="row">
+    <label>Soort<select id="fType"><option value="les">Les / college</option><option value="deadline">Deadline</option><option value="tentamen">Tentamen</option><option value="taak">Studietaak</option></select></label>
+    <label>Vak<input id="fVak" placeholder="bijv. Statistiek"></label>
+  </div>
+  <div class="row">
+    <label>Datum<input id="fDate" type="date" required></label>
+    <label>Tijd<input id="fTime" type="time" value="09:00"></label>
+  </div>
+  <label class="chkrow"><input type="checkbox" id="fRep"> Herhaal elke week</label>
+  <div class="btns"><button type="button" class="btn" id="cancel">Annuleren</button><button class="btn p" type="submit">Opslaan</button></div>
+</form>
+</dialog>
+
+<script>
+const TYPES={les:{n:"Les",c:"#6D5EF5"},deadline:{n:"Deadline",c:"#FF7A6B"},tentamen:{n:"Tentamen",c:"#E0489A"},taak:{n:"Taak",c:"#1FB88E"}};
+const DAGEN=["zo","ma","di","wo","do","vr","za"];
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,"0");
+const ds=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const pd=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+let items=[],tab="week",sel=ds(new Date()),weekOff=0,theme=null,msgI=0;
+try{items=JSON.parse(localStorage.getItem("pp_items")||"[]")}catch(e){}
+try{theme=localStorage.getItem("pp_theme")}catch(e){}
+if(!items.length){const t=new Date(),a=n=>{const d=new Date(t);d.setDate(d.getDate()+n);return ds(d)};
+ items=[{id:1,title:"Hoorcollege Marketing",type:"les",vak:"Marketing",date:a(0),time:"10:30",rep:true,done:{}},
+ {id:2,title:"Verslag inleveren",type:"deadline",vak:"Onderzoeksvaardigheden",date:a(1),time:"23:59",rep:false,done:{}},
+ {id:3,title:"Tentamen Statistiek",type:"tentamen",vak:"Statistiek",date:a(5),time:"13:00",rep:false,done:{}}]}
+const save=()=>{try{localStorage.setItem("pp_items",JSON.stringify(items))}catch(e){}};
+function setTheme(t){theme=t;if(t)document.documentElement.setAttribute("data-theme",t);try{t&&localStorage.setItem("pp_theme",t)}catch(e){}
+ const dark=t?t==="dark":matchMedia("(prefers-color-scheme:dark)").matches;$("#theme").textContent=dark?"☀️":"🌙"}
+setTheme(theme);
+$("#theme").onclick=()=>{const dark=document.documentElement.getAttribute("data-theme")?document.documentElement.getAttribute("data-theme")==="dark":matchMedia("(prefers-color-scheme:dark)").matches;setTheme(dark?"light":"dark")};
+
+const on=(it,d)=>it.rep?(pd(it.date)<=pd(d)&&pd(it.date).getDay()===pd(d).getDay()):it.date===d;
+const isDone=(it,d)=>!!it.done[it.rep?d:"x"];
+function dayItems(d){return items.filter(i=>on(i,d)).sort((a,b)=>a.time.localeCompare(b.time))}
+function occurrences(from,days){const out=[];for(let k=0;k<days;k++){const d=new Date(from);d.setDate(d.getDate()+k);const s=ds(d);dayItems(s).forEach(i=>out.push({it:i,d:s,at:new Date(s+"T"+i.time)}))}return out}
+
+function itemHTML(it,d){const T=TYPES[it.type];const dn=isDone(it,d);
+ return `<div class="item ${dn?"done":""}" style="--c:${T.c}"><button class="chk" data-chk="${it.id}|${d}" aria-label="Afvinken">${dn?"✓":""}</button>
+ <div class="body"><div class="t">${esc(it.title)}</div><div class="meta">${it.time}${it.vak?" · "+esc(it.vak):""}${it.rep?" · wekelijks":""}</div></div>
+ <span class="tag">${T.n}</span><button class="del" data-del="${it.id}" aria-label="Verwijderen">✕</button></div>`}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function render(){
+ $("#tabWeek").setAttribute("aria-selected",tab==="week");$("#tabAll").setAttribute("aria-selected",tab==="all");
+ let h="";
+ if(tab==="week"){
+  const base=new Date();base.setDate(base.getDate()-((base.getDay()+6)%7)+weekOff*7);
+  const mnd=base.toLocaleDateString("nl-NL",{month:"long",year:"numeric"});
+  h+=`<div class="weekbar"><button class="icon" id="prev" aria-label="Vorige week">‹</button><h2>${mnd}</h2><button class="icon" id="next" aria-label="Volgende week">›</button></div><div class="days">`;
+  for(let k=0;k<7;k++){const d=new Date(base);d.setDate(d.getDate()+k);const s=ds(d);const n=dayItems(s).filter(i=>!isDone(i,s)).length;
+   h+=`<button class="day ${s===ds(new Date())?"today":""}" data-day="${s}" aria-pressed="${s===sel}">${DAGEN[d.getDay()]}<b>${d.getDate()}</b><span class="dots">${"<i></i>".repeat(Math.min(n,3))}</span></button>`}
+  h+=`</div>`;
+  const list=dayItems(sel);
+  h+=`<h3 class="grp">${pd(sel).toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"})}</h3>`;
+  h+=list.length?list.map(i=>itemHTML(i,sel)).join(""):`<div class="empty">Niets gepland op deze dag. Tijd voor rust, of voeg iets toe met de knop rechtsonder.</div>`;
+ }else{
+  const occ=occurrences(new Date(new Date().toDateString()),30);
+  const g={};occ.forEach(o=>(g[o.d]=g[o.d]||[]).push(o));
+  const keys=Object.keys(g);
+  h+=keys.length?keys.map(k=>`<h3 class="grp">${pd(k).toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"})}</h3>`+g[k].map(o=>itemHTML(o.it,o.d)).join("")).join(""):`<div class="empty">Je planning voor de komende 30 dagen is leeg.</div>`;
+ }
+ $("#view").innerHTML=h;
+}
+$("#view").addEventListener("click",e=>{
+ const t=e.target.closest("button");if(!t)return;
+ if(t.id==="prev"){weekOff--;render()}else if(t.id==="next"){weekOff++;render()}
+ else if(t.dataset.day){sel=t.dataset.day;render()}
+ else if(t.dataset.chk){const[id,d]=t.dataset.chk.split("|");const it=items.find(i=>i.id==id);const k=it.rep?d:"x";it.done[k]=!it.done[k];save();render();say()}
+ else if(t.dataset.del){items=items.filter(i=>i.id!=t.dataset.del);save();render();say()}
+});
+$("#tabWeek").onclick=()=>{tab="week";render()};$("#tabAll").onclick=()=>{tab="all";render()};
+
+const dlg=$("#dlg");
+$("#add").onclick=()=>{$("#fDate").value=sel;dlg.showModal()};
+$("#cancel").onclick=()=>dlg.close();
+$("#f").onsubmit=()=>{items.push({id:Date.now(),title:$("#fTitle").value.trim(),type:$("#fType").value,vak:$("#fVak").value.trim(),date:$("#fDate").value,time:$("#fTime").value||"09:00",rep:$("#fRep").checked,done:{}});
+ save();sel=$("#fDate").value;weekOff=0;$("#f").reset();render();say("Opgeslagen! Ik houd het voor je in de gaten.")};
+
+/* Pip de robot */
+function greeting(){const h=new Date().getHours();return h<6?"Nog wakker? Rustig aan, hè.":h<12?"Goedemorgen!":h<18?"Goedemiddag!":"Goedenavond!"}
+function wanneer(ms){const m=Math.round(ms/60000);if(m<60)return `over ${m} min`;const u=Math.round(m/60);return u<24?`over ${u} uur`:"morgen"}
+function messages(){
+ const now=new Date(),M=[];
+ const occ=occurrences(new Date(new Date().toDateString()),3).filter(o=>!isDone(o.it,o.d));
+ const over=occ.filter(o=>o.at<now&&o.it.type!=="les"&&ds(o.at)===ds(now));
+ const next=occ.filter(o=>o.at>=now);
+ if(next[0]){const o=next[0],ms=o.at-now;M.push(`<em>${esc(o.it.title)}</em> begint ${wanneer(ms)} (${o.it.time}).${ms<36e5?" Tijd om je klaar te maken!":""}`)}
+ if(next[1])M.push(`Daarna: <em>${esc(next[1].it.title)}</em> om ${next[1].it.time}.`);
+ over.forEach(o=>M.push(`Oei, <em>${esc(o.it.title)}</em> was om ${o.it.time}. Al afgevinkt?`));
+ const today=dayItems(ds(now)),left=today.filter(i=>!isDone(i,ds(now))).length;
+ if(today.length&&!left)M.push("Alles voor vandaag is af. Goed gedaan! 🎉");
+ else if(left)M.push(`Je hebt vandaag nog ${left} ${left===1?"ding":"dingen"} te doen.`);
+ else M.push("Vandaag is vrij. Misschien alvast iets voorbereiden?");
+ return M}
+function say(custom){const M=custom?[custom]:messages();$("#bubble").innerHTML=M[msgI%M.length];msgI++}
+$("#robot").onclick=()=>say();
+let first=true;
+function boot(){render();$("#bubble").innerHTML=`${greeting()} Ik ben <em>Pip</em>, je studiemaatje. `+(messages()[0]||"");msgI=1}
+boot();
+setInterval(()=>{if(!dlg.open){render();if(!first)say();first=false}},60000);
+</script>
+</body>
+</html>
